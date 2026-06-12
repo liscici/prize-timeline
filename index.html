@@ -304,6 +304,10 @@ function render() {
     out += `</div>`;
     out += axisHTML();
 
+    // Sort: active by end date asc, done by end date desc
+    active.sort((a, b) => d(a.end) - d(b.end));
+    done.sort((a, b) => d(a.end) - d(b.end));
+
     // Active items first
     active.forEach(item => { out += rowHTML(item, itemKey(item), false); });
 
