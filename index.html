@@ -57,6 +57,7 @@
   .tag-free-food { background: rgba(230,70,70,0.25); color: #ff8a8a; }
   .tag-free-trial { background: rgba(0,180,180,0.25); color: #5de8e8; }
   .tag-explore { background: rgba(240,180,60,0.25); color: #f0c040; }
+  .tag-prize { background: rgba(255,106,0,0.25); color: #ff8c33; }
   .tag-price { background: rgba(255,255,255,0.08); color: #aab; }
   .tag-note { background: rgba(255,255,255,0.06); color: #889; }
 
@@ -113,6 +114,7 @@
   .bar-food { background: linear-gradient(135deg, #e64646, #c03030); }
   .bar-trial { background: linear-gradient(135deg, #00b4b4, #008888); }
   .bar-explore { background: linear-gradient(135deg, #d4a017, #b8860b); }
+  .bar-prize { background: linear-gradient(135deg, #ff6a00, #cc5500); }
 
   .today-line {
     position: absolute; top: 0; bottom: 0;
@@ -159,6 +161,7 @@
     <div class="legend-item"><div class="legend-swatch" style="background:#e64646"></div>免费菜</div>
     <div class="legend-item"><div class="legend-swatch" style="background:#00b4b4"></div>免费试</div>
     <div class="legend-item"><div class="legend-swatch" style="background:#d4a017"></div>0元探店</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#ff6a00"></div>中奖换购</div>
     <div class="legend-item"><div class="legend-diamond"></div>今日</div>
   </div>
   <div id="app"></div>
@@ -181,6 +184,9 @@ function pct(date) { return ((date - RANGE_START) / 86400000 / TOTAL_DAYS * 100)
 function itemKey(item) { return item.name + '|' + item.start; }
 
 const data = [
+  { district: '中奖换购', items: [
+    { name: '农夫山泉30周年开盖赢奖', desc: '壹元换购 400-600ml任意饮料一瓶', type: 'prize', price: '¥1', note: '瓶盖为唯一兑奖凭证·20日内兑奖', start: '06/13', end: '07/03', addr: '前往附近兑奖点兑换', lat: null, lng: null },
+  ]},
   { district: '宝安区', items: [
     { name: '喜鸽光明乳鸽·粤点海鲜', desc: '双人套餐', type: 'explore', price: '¥194', note: '需提前1天预约', start: '05/18', end: '07/16', addr: '新安街道西城上筑佳禾荟商场二楼202号', lat: 22.556704, lng: 113.890848 },
     { name: '一心缘糖水铺', desc: '炸鱼蛋1份(5个)', type: 'food', price: '¥10', note: '周六不可用', start: '06/10', end: '06/24', addr: '西乡街道径贝社区78-2号', lat: 22.568409, lng: 113.877669 },
@@ -242,11 +248,9 @@ function axisHTML() {
 function rowHTML(item, key, isDone) {
   const s = d(item.start), e = d(item.end);
   const left = pct(s), width = pct(e) - left;
-  const isFood = item.type === 'food';
-  const isExplore = item.type === 'explore';
-  const barClass = isFood ? 'bar-food' : isExplore ? 'bar-explore' : 'bar-trial';
-  const tagClass = isFood ? 'tag-free-food' : isExplore ? 'tag-explore' : 'tag-free-trial';
-  const tagLabel = isFood ? '免费菜' : isExplore ? '0元探店' : '免费试';
+  const typeMap = { food: { bar: 'bar-food', tag: 'tag-free-food', label: '免费菜' }, trial: { bar: 'bar-trial', tag: 'tag-free-trial', label: '免费试' }, explore: { bar: 'bar-explore', tag: 'tag-explore', label: '0元探店' }, prize: { bar: 'bar-prize', tag: 'tag-prize', label: '中奖换购' } };
+  const t = typeMap[item.type] || typeMap.trial;
+  const barClass = t.bar, tagClass = t.tag, tagLabel = t.label;
 
   let html = `<div class="row ${isDone ? 'row-done' : ''}" data-key="${key}">`;
   html += `<div class="row-info">`;
